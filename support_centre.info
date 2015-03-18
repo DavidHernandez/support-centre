@@ -1,0 +1,6 @@
+name = Support Centre
+description = "Adds a support content type and support category vocabulary, with a page to list all the items with dinamic filter and loading."
+project = Others
+core = 7.x
+version = 7.x-1.0
+

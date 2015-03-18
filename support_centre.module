@@ -1,0 +1,164 @@
+<?php
+
+/**
+ * @file
+ *  Adds a page to easily find support on different topics.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function support_centre_theme() {
+  $theme['support_page'] = array(
+    'variables' => array(
+      'form' => NULL,
+      'links' => NULL,
+    ),
+    'template' => 'support-page',
+    'path' => drupal_get_path('module', 'support_centre') . '/templates',
+  );
+  $theme['custom_links'] = array(
+    'variables' => array(
+      'heading' => NULL,
+      'main_attributes' => NULL,
+      'links' => NULL,
+    ),
+    'template' => 'support-page-custom-links',
+    'path' => drupal_get_path('module', 'support_centre') . '/templates',
+  );
+  return $theme;
+}
+
+/**
+ * Implements hook_preprocess_support_page().
+ */
+function support_centre_preprocess_support_page(&$variables) {
+  drupal_add_js(drupal_get_path('module', 'support_centre') . '/js/support_centre.js');
+  drupal_add_css(drupal_get_path('module', 'support_centre') . '/css/support_centre.css');
+}
+
+/**
+ * Implements hook_permission().
+ */
+function support_centre_permission() {
+  $permissions['access support page'] = array(
+    'title' => t('Access support page'),
+    'description' => t('Add this permission to the roles you want to give access to the support page.'),
+  );
+  return $permissions;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function support_centre_menu() {
+  $menu['support-centre'] = array(
+    'title' => 'Support centre',
+    'page callback' => 'support_centre_page',
+    'page arguments' => array(2),
+    'access arguments' => array('access support page'),
+  );
+  $menu['support/json-load/%node'] = array(
+    'title' => 'Support json load',
+    'page callback' => 'support_json_load',
+    'page arguments' => array(2),
+    'access arguments' => array('access support page'),
+    'type' => MENU_CALLBACK,
+  );
+  return $menu;
+}
+
+/**
+ * Page callback for support-centre.
+ */
+function support_centre_page($string) {
+  $pages = support_centre_get_pages($string);
+  $terms = array();
+  $support_pages = '';
+  foreach ($pages as $tid => $nodes) {
+    $term = taxonomy_term_load($tid);
+    $tag_class = 'icon-tags';
+    if ($field = field_get_items('taxonomy_term', $term, 'field_icon_class')) {
+      $tag_class = $field[0]['value'];
+    }
+    $vars = array(
+      'heading' => array(
+        'level' => 'h3',
+      ),
+      'main_attributes' => array(
+        'id' => $tid,
+        'classes' => $tag_class,
+      ),
+    );
+    $links = array();
+    foreach ($nodes as $nid => $data) {
+      $vars['heading']['text'] = $data['tag'];
+      $links[] = array(
+        'href' => '',
+        'title' => $data['title'],
+        'attributes' => array(
+          'id' => $nid,
+        ),
+        'fragment' => 'content',
+        'external' => TRUE,
+      );
+    }
+    $vars['links'] = $links;
+    $support_pages .= theme('custom_links', $vars);
+  }
+  $search_form = drupal_get_form('support_centre_page_form');
+  $form = render($search_form);
+  return theme('support_page', array('form' => $form, 'support_pages' => $support_pages));
+}
+
+/**
+ * Form callback to render the support search form.
+ */
+function support_centre_page_form($form, &$form_state) {
+  $form['search'] = array(
+    '#type' => 'textfield',
+    '#attributes' => array('placeholder' => t('Search').'...'),
+    '#suffix' => '<span class="icon-search"></span>',
+  );
+  return $form;
+}
+
+/**
+ * Page callback for support/json-load/%node.
+ */
+function support_json_load($node) {
+  if ($node->type == 'support_page') {
+    $body = field_get_items('node', $node, 'body');
+    $data = array(
+      'nid' => $node->nid,
+      'title' => $node->title,
+      'body' => ($body[0]['safe_value']) ? $body[0]['safe_value'] : '',
+    );
+    drupal_json_output($data);
+  }
+}
+
+/**
+ * Gets the list of support pages.
+ */
+function support_centre_get_pages() {
+  $pages = array();
+  $q = db_select('node', 'n');
+  $q->fields('n', array('nid', 'title'));
+  $q->fields('t', array('name', 'tid'));
+  $q->join('field_data_field_category', 'c', 'c.entity_id = n.nid');
+  $q->join('taxonomy_term_data', 't', 't.tid = c.field_category_tid');
+  $q->condition('n.type', 'support_page');
+  $results = $q->execute();
+  foreach ($results->fetchAll() as $result) {
+    $pages[$result->tid][$result->nid] = array(
+      'title' => $result->title,
+      'tag' => $result->name,
+      'tid' => $result->tid,
+      'nid' => $result->nid,
+    );
+  }
+  $settings = array('supportSearch' => array('pages' => $pages));
+  drupal_add_js($settings, 'setting');
+  return $pages;
+}

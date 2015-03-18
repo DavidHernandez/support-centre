@@ -1,0 +1,119 @@
+#support-page .out-container,
+#support-page .in-container {
+  position: relative;
+  float: left;
+  width: 100%;
+}
+
+#support-page .out-container{
+border: 1px solid #B9B9B9;
+-webkit-border-top-left-radius: 4px;
+-webkit-border-top-right-radius: 4px;
+-moz-border-radius-topleft: 4px;
+-moz-border-radius-topright: 4px;
+border-top-left-radius: 4px;
+border-top-right-radius: 4px;
+background: #dadada;
+padding: 8px 0;
+}
+#support-page .in-container {
+border: 1px solid #B8B8B8;
+-webkit-border-bottom-left-radius: 4px;
+-webkit-border-bottom-right-radius: 4px;
+-moz-border-radius-bottomleft: 4px;
+-moz-border-radius-bottomright: 4px;
+border-bottom-left-radius: 4px;
+border-bottom-right-radius: 4px;
+margin-bottom: 10px;
+border-top: 0;
+padding: 0;
+margin-bottom: 4px;
+}
+
+#support-page span{
+  font-size: 14px;
+  color: #0088cc;
+  position: relative;
+  float: left;
+  padding-top: 14px;
+  padding-left: 14px;
+
+}
+#support-page h3{
+  color: #0088cc;
+  position: relative;
+  float: left;
+  padding-left: 20px;
+  font-size: 14px;
+  margin: 0;
+  float: none;
+}
+#support-page .in-container ul{
+  margin: 0;
+  padding: 0;
+}
+#support-page .in-container ul li{
+  color: #0088cc;
+  font-size: 12px;
+  width: 85%;
+  padding: 0 20px;
+}
+#support-page .in-container ul li a{
+  color: #0088cc;
+  font-size: 12px;
+}
+
+.collapse {
+  padding:0;
+}
+
+div.error, table tr.error {
+display: none;
+}
+
+#breadcrumbs {display: none}
+.page-support-centre section.page-top {
+text-align: center;
+}
+.page-support-centre section.page-top h2 {
+border-bottom-color: #CCC;
+}
+
+.accordion {
+  margin-bottom: 0px;
+}
+.accordion-heading {
+  background: #eee
+}
+.accordion-group {
+  margin-bottom: 4px
+}
+.hidden-item {
+  display: none;
+}
+
+div#support-links,
+#support-page .form-item.form-type-textfield.form-item-search {
+position: relative;
+float: left;
+}
+#support-page .form-item.form-type-textfield.form-item-search {
+margin: 0;
+margin-bottom: 40px;
+}
+
+#support-page .icon-search{
+background: #0088cc;
+padding: 10px 16px;
+border-bottom-right-radius: 4px;
+border-top-right-radius: 4px;
+}
+#support-page .icon-search:before {
+content: "\f002";
+color: white;
+margin: 2px 0;
+}
+#support-page  input#edit-search {
+padding: 8px;
+border-top-right-radius: 0px;
+border-bottom-right-radius: 0px;}
